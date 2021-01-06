@@ -12,7 +12,7 @@ const DataDsiplay = () => {
 
   // Fetch data from the DB, store it in the state variable
   useEffect(() => {
-    fetch("http://localhost:3001/products", {
+    fetch(`${process.env.REACT_APP_API_URL}products`, {
       method: "GET",
     })
       .then((response) => {
