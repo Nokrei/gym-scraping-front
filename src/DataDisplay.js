@@ -1,13 +1,18 @@
+// Import React and necesary hooks
 import React, { useState, useEffect } from "react";
+
+// Import Typography for fast styling
 import Typography from "@material-ui/core/Typography";
 
+// Initiate component, initiate state variable for data storage
 const DataDsiplay = () => {
   const [state, setState] = useState({
     data: [],
   });
 
+  // Fetch data from the DB, store it in the state variable
   useEffect(() => {
-    fetch("http://localhost:3000/products", {
+    fetch("http://localhost:3001/products", {
       method: "GET",
     })
       .then((response) => {
@@ -20,6 +25,8 @@ const DataDsiplay = () => {
         });
       });
   }, []);
+
+  // Sort data by lowest price
   const compare = (a, b) => {
     if (a.price < b.price) {
       return -1;
@@ -30,26 +37,48 @@ const DataDsiplay = () => {
     return 0;
   };
   state.data.sort(compare);
-  console.log(state.data);
+
+  // Assign RegEx to variable for trimming the gym name
+  const r = /:\/\/(.[^/]+)/;
+
   return (
-    <div style={{
-        display:'grid',
-        gridTemplateColumns: '1fr 1fr',
-        justifyItems: 'center'
-    }}>
+    <div
+      style={{
+        display: "grid",
+        justifyItems: "center",
+        paddingTop: "2em",
+      }}
+    >
       <div>
-        <Typography variant="h6">Gym</Typography>
+        <Typography variant="h6">Gyms listed by price</Typography>
         {state.data.map((data) => {
-          return <Typography variant="body1"><a href={data.name} target="_blank">{data.name}</a></Typography>;
+          return (
+            <div
+              className="gymName"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                margin: "auto",
+              }}
+            >
+              <Typography variant="body1">
+                <a href={data.name} target="_blank" rel="noreferrer">
+                  {data.name.match(r)[1]}
+                </a>
+              </Typography>
+              <Typography
+                style={{
+                  paddingLeft: "1em",
+                  justifySelf: "right",
+                }}
+                variant="body1"
+              >
+                {data.price} AED
+              </Typography>
+            </div>
+          );
         })}
       </div>
-      <div>
-        <Typography variant="h6">Price</Typography>
-        {state.data.map((data) => {
-          return <Typography variant="body1">{data.price} AED</Typography>;
-        })}
-      </div>
-     
     </div>
   );
 };
