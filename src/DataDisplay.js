@@ -4,15 +4,19 @@ import React, { useState, useEffect } from "react";
 // Import Typography for fast styling
 import Typography from "@material-ui/core/Typography";
 
+// Import progress loader
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 // Initiate component, initiate state variable for data storage
 const DataDsiplay = () => {
   const [state, setState] = useState({
     data: [],
+    success: false,
   });
 
   // Fetch data from the DB, store it in the state variable
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}products`, {
+    fetch(`http://localhost:3001/products`, {
       method: "GET",
     })
       .then((response) => {
@@ -22,6 +26,7 @@ const DataDsiplay = () => {
       .then((response) => {
         setState({
           data: response,
+          success: true,
         });
       });
   }, []);
@@ -48,37 +53,39 @@ const DataDsiplay = () => {
         justifyItems: "center",
         paddingTop: "2em",
       }}
-    >
-      <div>
-        <Typography variant="h6">Gyms listed by price</Typography>
-        {state.data.map((data) => {
-          return (
-            <div
-              className="gymName"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                margin: "auto",
-              }}
-            >
-              <Typography variant="body1">
-                <a href={data.name} target="_blank" rel="noreferrer">
-                  {data.name.match(r)[1]}
-                </a>
-              </Typography>
-              <Typography
+    > {!state.success && <CircularProgress />}
+      {state.success && (
+        <div>
+          <Typography variant="h6">Gyms listed by price</Typography>
+          {state.data.map((data) => {
+            return (
+              <div
+                className="gymName"
                 style={{
-                  paddingLeft: "1em",
-                  justifySelf: "right",
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  margin: "auto",
                 }}
-                variant="body1"
               >
-                {data.price} AED
-              </Typography>
-            </div>
-          );
-        })}
-      </div>
+                <Typography variant="body1">
+                  <a href={data.name} target="_blank" rel="noreferrer">
+                    {data.name.match(r)[1]}
+                  </a>
+                </Typography>
+                <Typography
+                  style={{
+                    paddingLeft: "1em",
+                    justifySelf: "right",
+                  }}
+                  variant="body1"
+                >
+                  {data.price} AED
+                </Typography>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
